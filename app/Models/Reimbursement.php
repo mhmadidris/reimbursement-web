@@ -9,4 +9,5 @@ use Illuminate\Database\Eloquent\Model;
 class Reimbursement extends Model
 {
     use HasFactory, HasUuids;
+    public $guarded = [];
 }

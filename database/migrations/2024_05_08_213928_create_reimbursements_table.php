@@ -18,9 +18,17 @@ return new class extends Migration
             $table->timestamp('date_reimbursement')->nullable();
             $table->text('description')->nullable();
             $table->binary('attachment')->nullable();
+            $table->enum('status', ['pending', 'terima', 'tolak'])->nullable();
+            $table->timestamp('status_date')->nullable();
+            $table->uuid('officer_user_id')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
+            $table->foreign('officer_user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('CASCADE')

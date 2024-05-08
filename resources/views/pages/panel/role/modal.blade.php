@@ -26,7 +26,7 @@
                     <div class="d-flex flex-column w-100">
                         <label class="pb-1 h6 fw-bold" for="email">Email</label>
                         <input type="email" class="form-control bg-header-footer text-white border-0" id="email"
-                            name="email" placeholder="Your Email" autocomplete="off" required>
+                            name="email" placeholder="Your Email" autocomplete="off">
                     </div>
 
                     <div class="d-flex flex-column w-100">
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="submit" class="btn text-white" style="background: #FF4040;">Save changes</button>
+                    <button type="submit" class="btn btn-sm text-white" style="background: #FF4040;">Save</button>
                 </div>
             </form>
         </div>
