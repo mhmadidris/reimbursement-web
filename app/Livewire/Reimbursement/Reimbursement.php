@@ -3,48 +3,70 @@
 namespace App\Livewire\Reimbursement;
 
 use App\Models\Reimbursement as ModelsReimbursement;
+use App\Models\ReimbursementLog;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
-use Livewire\Features\SupportFileUploads\WithFileUploads;
+use Livewire\WithFileUploads;
+use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 
 class Reimbursement extends Component
 {
-    use WithFileUploads, WithPagination;
+    use WithPagination, WithoutUrlPagination;
 
-    public $reimbursements;
+    use WithFileUploads;
+
+    public $isOpenModal = false;
+    public $selectedData;
+
+    public $reimbursement_logs;
     public $dateReimburs, $nameReimburs, $descReimburs, $mediaReimburs;
 
-    public function boot()
-    {
-        $this->getData();
-    }
+    public $getReimburs;
 
     #[On('updateData')]
-    public function getData()
+    private function getData()
     {
         if (Auth::user()->hasRole('staff')) {
-            $this->reimbursements = ModelsReimbursement::where('user_id', Auth::user()->id)->orderBy('created_at', 'DESC')->get();
+            $reimbursements = ModelsReimbursement::where('reimbursements.user_id', Auth::user()->id)
+                ->orderBy('reimbursements.created_at', 'ASC')
+                ->paginate(7);
         } else {
-            $this->reimbursements = ModelsReimbursement::orderBy('created_at', 'DESC')->get();
+            $reimbursements = ModelsReimbursement::orderBy('reimbursements.created_at', 'ASC')
+                ->paginate(7);
         }
+
+        return $reimbursements;
+    }
+
+    public function getOneData($id)
+    {
+        $this->getReimburs = ModelsReimbursement::findOrFail($id)->first();
     }
 
     public function inserData()
     {
-        $saveMediaUpload = $this->saveMedia();
+        $filename = null;
+        if ($this->mediaReimburs) {
+            $filename = time() . '.' . $this->mediaReimburs->getClientOriginalExtension();
+        }
 
-        $saveData = ModelsReimbursement::create([
+        $reimbursData = ModelsReimbursement::create([
             'user_id' => Auth::user()->id,
             'date_reimbursement' => $this->dateReimburs,
             'name_reimbursement' => $this->nameReimburs,
             'description' => $this->descReimburs,
-            'status' => 'pending',
-            'attachment' => $saveMediaUpload,
+            'attachment' => $filename,
         ]);
 
-        if ($saveData) {
+        $saveData = ReimbursementLog::create([
+            'reimbursement_id' => $reimbursData->id,
+        ]);
+
+        if ($reimbursData && $saveData) {
+            $this->saveMedia($filename);
+
             $this->dispatch(
                 'showToast',
                 isToast: true,
@@ -74,10 +96,60 @@ class Reimbursement extends Component
         $this->dispatch('updateData');
     }
 
+    public function updateStatus($id, $status)
+    {
+        $updateStatudData = null;
+        if ($status == 'terima') {
+            $updateStatudData = ReimbursementLog::create([
+                'reimbursement_id' => $id,
+                'status' => $status,
+                'employee_user_id' => Auth::user()->id,
+            ]);
+        } else {
+            $updateStatudData = ReimbursementLog::create([
+                'reimbursement_id' => $id,
+                'status' => $status,
+                'employee_user_id' => Auth::user()->id,
+                'reason' => "contoh",
+            ]);
+        }
+
+        if ($updateStatudData) {
+            $this->dispatch(
+                'showToast',
+                isToast: true,
+                position: "top-end",
+                isShowConfirmButton: false,
+                isShowCloseButton: true,
+                icon: "success",
+                message: "Berhasil mengubah status reimbursement",
+                timerDuration: 2500,
+                isShowTimerProgressBar: true
+            );
+        } else {
+            $this->dispatch(
+                'showToast',
+                isToast: true,
+                position: "top-end",
+                isShowConfirmButton: false,
+                isShowCloseButton: true,
+                icon: "error",
+                message: "Gagal mengubah status reimbursement",
+                timerDuration: 2500,
+                isShowTimerProgressBar: true
+            );
+        }
+
+        $this->dispatch('updateData');
+    }
+
     public function deleteData($id)
     {
-        $deleteData = ModelsReimbursement::findOrFail($id)->delete();
-        if ($deleteData) {
+        $checkData = ModelsReimbursement::findOrFail($id)->first();
+
+        if ($checkData->delete()) {
+            $this->deleteMedia($checkData->attachment);
+
             $this->dispatch(
                 'showToast',
                 isToast: true,
@@ -108,20 +180,9 @@ class Reimbursement extends Component
 
     public function render()
     {
-        return view('livewire.reimbursement.reimbursement');
-    }
+        $reimbursements = $this->getData();
 
-    public function saveMedia()
-    {
-        $mediaPath = null;
-
-        if ($this->mediaReimburs) {
-            $filename = time() . '_' . $this->mediaReimburs->getClientOriginalName();
-
-            $mediaPath = $this->mediaReimburs->storeAs('reimbursement', $filename, 'public');
-        }
-
-        return $mediaPath;
+        return view('livewire.reimbursement.reimbursement', compact('reimbursements'));
     }
 
     public function clearInput()
@@ -130,5 +191,15 @@ class Reimbursement extends Component
         $this->nameReimburs = null;
         $this->descReimburs = null;
         $this->mediaReimburs = null;
+    }
+
+    private function saveMedia($filename)
+    {
+        $this->mediaReimburs->storeAs('reimbursement', $filename, 'public');
+    }
+
+    private function deleteMedia($filename)
+    {
+        Storage::disk('public')->delete('reimbursement/' . $filename);
     }
 }

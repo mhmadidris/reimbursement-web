@@ -9,11 +9,14 @@
         <h4 class="m-0 fw-bold">
             Reimbursement Data
         </h4>
-        <button data-bs-toggle="modal" data-bs-target="#modalAddReimburs"
-            class="btn btn-sm bg-btn-green text-black fw-bold d-flex flex-row align-items-center justify-content-center gap-2 mb-2">
-            <i class="fas fa-plus"></i>
-            <span class="d-md-block d-none">Tambah</span>
-        </button>
+
+        @if (Auth::user()->hasRole('staff'))
+            <button data-bs-toggle="modal" data-bs-target="#modalAddReimburs"
+                class="btn btn-sm bg-btn-green text-black fw-bold d-flex flex-row align-items-center justify-content-center gap-2">
+                <i class="fas fa-plus"></i>
+                <span class="d-md-block d-none">Tambah</span>
+            </button>
+        @endif
     </div>
 
     @livewire('reimbursement.reimbursement')

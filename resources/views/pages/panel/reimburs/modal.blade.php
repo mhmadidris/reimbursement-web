@@ -4,7 +4,7 @@
     }
 </style>
 
-<!-- Modal Add Role User -->
+<!-- Modal Create Data -->
 <div class="modal fade" data-bs-backdrop="static" id="modalAddReimburs" tabindex="-1"
     aria-labelledby="modalAddReimbursLabel" aria-hidden="true" wire:ignore.self>
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -55,6 +55,25 @@
             </div>
             <div class="modal-footer border-0">
                 <button wire:click="inserData" class="btn btn-sm text-white" style="background: #FF4040;">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Preview Data -->
+<div class="modal fade" data-bs-backdrop="static" id="modalShowData" tabindex="-1" aria-labelledby="modalShowDataLabel"
+    aria-hidden="true" wire:ignore.self>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content bg-tabel text-white">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold" id="modalShowDataLabel">Preview Reimbursement</h5>
+                <button type="button" class="btn border-0" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark fa-lg text-white"></i>
+                </button>
+            </div>
+            <div class="modal-body d-flex flex-column gap-3">
+                <h3>asas</h3>
+
             </div>
         </div>
     </div>

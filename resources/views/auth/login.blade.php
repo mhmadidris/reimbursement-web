@@ -8,15 +8,6 @@
     <div class="container d-flex flex-column align-items-center justify-content-center" style="min-height: 100vh;">
         <div class="col-12 col-sm-10 col-md-8 col-lg-6">
             <div class="container-fluid card shadow text-white" style="background-color: #0000CC;">
-                <div class="card-body d-flex flex-md-row flex-column justify-content-between align-items-center gap-3">
-                    <a href="javascript:void(0);" onclick="history.back();"
-                        class="nav-link d-none d-md-flex flex-row align-items-center gap-2" style="font-size: 1rem;">
-                        <i class="fas fa-chevron-left"></i>
-                        <span class="fw-semibold">Back</span>
-                    </a>
-                </div>
-
-                <hr class="hr m-0">
 
                 <form method="POST" action="{{ route('login', app()->getLocale()) }}">
                     @csrf
