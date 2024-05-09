@@ -7,7 +7,7 @@
 @section('content')
     <div class="mb-4 text-white d-flex justify-content-between align-content-center align-items-center">
         <h4 class="m-0 fw-bold">
-            Pengaturan Peran
+            Data Karyawan
         </h4>
         <button data-bs-toggle="modal" data-bs-target="#modalAddUser"
             class="btn btn-sm bg-btn-green text-black fw-bold d-flex flex-row align-items-center justify-content-center gap-2 mb-2">
@@ -18,15 +18,15 @@
 
     <div class="card">
         <div class="table-responsive rounded">
-            <table class="table table-borderless">
+            <table class="table">
                 <caption class="visually-hidden">Description of the table</caption>
                 <thead style="background: #D9D9D9;">
                     <tr>
                         <th class="text-center" scope="col">#</th>
+                        <th scope="col">NIP</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Email Verified</th>
-                        <th scope="col">Role</th>
+                        <th scope="col">Jabatan</th>
                         <th class="text-center" scope="col">Action</th>
                     </tr>
                 </thead>
@@ -37,18 +37,20 @@
                     @foreach ($users as $user)
                         <tr>
                             <th class="text-center" scope="row">{{ $i++ }}</th>
+                            <td>{{ $user->nip }}</td>
                             <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            @if ($user->is_verified != null)
-                                <td class="text-success fw-medium">Verified</td>
-                            @else
-                                <td class="text-danger fw-medium">Not Verified</td>
-                            @endif
+                            <td>
+                                @if ($user->email != null)
+                                    {{ $user->email }}
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td>{{ $user->roles->first()->display_name }}</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center align-content-center align-items-center">
                                     {{-- <button class="btn border-0" style="color: #FF4040;" data-bs-toggle="modal"
-                                        data-bs-target="#modalEditUser{{ $user->id }}">Edit</button> --}}
+                                        data-bs-target="#modalEditUser-{{ $user->id }}">Edit</button> --}}
                                     <form
                                         action="{{ route('setting-admin.destroy', ['locale' => app()->getLocale(), 'setting_admin' => $user->id]) }}"
                                         method="POST">
@@ -66,9 +68,11 @@
             </table>
         </div>
     </div>
-    <div class="float-end mt-2">
-        {{ $users->links() }}
-    </div>
+    @if ($users->hasPages())
+        <div class="mt-4 me-3 w-full d-flex justify-content-end">
+            {{ $users->links('pagination::bootstrap-4') }}
+        </div>
+    @endif
 
     @include('pages.panel.role.modal')
 

@@ -2,39 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use App\Models\Role;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Laravolt\Avatar\Facade as Avatar;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class RolesController extends Controller
 {
     public function index()
     {
-        $users = User::whereHas('roles', function ($query) {
-            $query->whereNotIn('name', ['customer']);
-        })->paginate(10);
-        $roles = Role::whereNotIn('name', ['customer'])->get();
+        $users = User::orderBy('created_at', 'DESC')->paginate(8);
+        $roles = Role::get();
 
         return view('pages.panel.role.index')->with('users', $users)->with('roles', $roles);
     }
 
     public function store(Request $request)
     {
-        try {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
-
-            $user->addRole($request->role);
-
-            Alert::toast('Add new user role successfully!', 'success', ['icon' => 'success']);
-        } catch (\Exception $e) {
-            Alert::toast('Failed to add new user role. Please try again.', 'error', ['icon' => 'error']);
+        $path = storage_path('app/public/avatars/');
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0755, true, true);
         }
+
+        $jabatan = null;
+        if ($request->role == 'director') {
+            $jabatan = 'DIREKTUR';
+        } elseif ($request->role == 'finance') {
+            $jabatan = 'FINANCE';
+        } else {
+            $jabatan = 'STAFF';
+        }
+
+        $user = User::create([
+            'nip' => $request->nip,
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+        $user->addRole($request->role);
+
+        $avatarDirectorName = 'avatar-' . $user->id . '-' . $user['name'] . '.png';
+        Avatar::create($user->name)->save($path . $avatarDirectorName);
+        Profile::create([
+            'user_id' => $user->id,
+            'avatar' => 'avatars/' . $avatarDirectorName,
+            'jabatan' => $jabatan,
+        ]);
+
+        Alert::toast('Add new user role successfully!', 'success', ['icon' => 'success']);
 
         return redirect()->back();
     }
@@ -47,19 +66,32 @@ class RolesController extends Controller
         //
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $locale)
     {
+        dd($id);
         $user = User::find($id);
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
+        dd($user);
 
-        $currentRole = $user->roles->first();
-        $user->detachRole($currentRole->name);
+        if ($request->password != null) {
+            $user->update([
+                'nip' => $request->nip,
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+        } else {
+            $user->update([
+                'nip' => $request->nip,
+                'name' => $request->name,
+                'email' => $request->email,
+            ]);
+        }
 
-        $newRole = $request->role;
-        $user->attachRole($newRole);
+        // $currentRole = $user->roles->first();
+        // $user->detachRole($currentRole->name);
+
+        // $newRole = $request->role;
+        // $user->attachRole($newRole);
 
         return redirect()->back();
     }

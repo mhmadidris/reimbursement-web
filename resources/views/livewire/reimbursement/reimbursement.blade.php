@@ -88,9 +88,9 @@
                                         @endif
 
                                         @if (Auth::user()->hasRole('staff') && count($reimbursementLogs) == 1)
-                                            <button class="btn btn-sm text-white border-0 bg-primary"
+                                            {{-- <button class="btn btn-sm text-white border-0 bg-primary"
                                                 style="width: 5vw;" data-bs-toggle="modal"
-                                                data-bs-target="#modalEditReimburs-{{ $item->id }}">Edit</button>
+                                                data-bs-target="#modalEditReimburs-{{ $item->id }}">Edit</button> --}}
                                             <button wire:confirm="Anda yakin ingin menghapus proposal ini?"
                                                 class="btn btn-sm text-white border-0 bg-danger"
                                                 wire:click="deleteData('{{ $item->id }}')"
