@@ -54,7 +54,8 @@
                 </div>
             </div>
             <div class="modal-footer border-0">
-                <button wire:click="inserData" class="btn btn-sm text-white" style="background: #FF4040;">Save</button>
+                <button wire:click="inserData" class="btn btn-sm text-white" style="background: #FF4040;"
+                    @if (!$isOpenModal) data-bs-dismiss="modal" @endif>Save</button>
             </div>
         </div>
     </div>
@@ -138,24 +139,31 @@
                             @php
                                 $extension = pathinfo($getData->attachment, PATHINFO_EXTENSION);
                             @endphp
-                            @if ($extension)
-                                <div class="d-flex gap-2 align-items-center my-2">
-                                    <span class="bg-header-footer p-2 rounded">
-                                        <i class="fa-solid fa-file-pdf fa-xl"></i>
-                                    </span>
-                                    <p class="m-0">
-                                        {{ $getData->name_reimbursement . '.' . $extension }}
-                                    </p>
-                                </div>
+                            @if ($extension == 'pdf')
+                                <a href="{{ asset('storage/reimbursement/' . $getData->attachment) }}" class="nav-link"
+                                    target="_blank">
+                                    <div class="d-flex gap-2 align-items-center my-2">
+                                        <span class="bg-header-footer p-2 rounded">
+                                            <i class="fa-solid fa-file-pdf fa-xl"></i>
+                                        </span>
+                                        <p class="m-0">
+                                            {{ $getData->name_reimbursement . '.' . $extension }}
+                                        </p>
+                                    </div>
+                                </a>
                             @else
-                                <div class="d-flex gap-2 align-items-center my-2">
-                                    <span class="bg-header-footer p-2 rounded">
-                                        <i class="fa-solid fa-image fa-xl"></i>
-                                    </span>
-                                    <p class="m-0">
-                                        {{ $getData->name_reimbursement . '.' . $extension }}
-                                    </p>
-                                </div>
+                                <a href="{{ asset('storage/reimbursement/' . $getData->attachment) }}"
+                                    data-lightbox="{{ $getData->attachment }}"
+                                    data-title="{{ $getData->name_reimbursement }}" class="nav-link">
+                                    <div class="d-flex gap-2 align-items-center my-2">
+                                        <span class="bg-header-footer p-2 rounded">
+                                            <i class="fa-solid fa-image fa-xl"></i>
+                                        </span>
+                                        <p class="m-0">
+                                            {{ $getData->name_reimbursement . '.' . $extension }}
+                                        </p>
+                                    </div>
+                                </a>
                             @endif
                         @else
                             None

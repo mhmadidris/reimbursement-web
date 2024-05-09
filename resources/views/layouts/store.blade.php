@@ -57,11 +57,11 @@
                         <h4 class="m-0 fw-bold">Staff</h4>
                     </div>
                 @else
+                    <div class="sidebar-brand-full">
+                        <h6 class="m-0 fw-semibold">Dashboard</h6>
+                        <h4 class="m-0 fw-bold">Director</h4>
+                    </div>
                 @endif
-                <div class="sidebar-brand-full">
-                    <h6 class="m-0 fw-semibold">Dashboard</h6>
-                    <h4 class="m-0 fw-bold">Director</h4>
-                </div>
             @endif
         </div>
         @include('layouts.navigation')

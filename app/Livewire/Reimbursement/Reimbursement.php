@@ -61,6 +61,7 @@ class Reimbursement extends Component
 
         if ($reimbursData && $saveData) {
             $this->saveMedia($filename);
+            $this->isOpenModal = true;
 
             $this->dispatch(
                 'showToast',
@@ -88,6 +89,7 @@ class Reimbursement extends Component
         }
 
         $this->clearInput();
+        $this->isOpenModal = false;
         $this->dispatch('updateData');
     }
 

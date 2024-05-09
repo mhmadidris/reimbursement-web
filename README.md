@@ -37,3 +37,4 @@ Password: 123456
 -   Laratrust
 -   Livewire
 -   SweetAlert
+-   Lighthbox2
