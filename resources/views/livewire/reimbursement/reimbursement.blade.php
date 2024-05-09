@@ -63,8 +63,9 @@
                                         class="d-flex justify-content-center align-content-center align-items-center gap-2">
                                         <button class="btn btn-sm text-white border-0" data-bs-toggle="modal"
                                             style="background-color: green; width: 5vw;" data-bs-toggle="modal"
-                                            data-bs-target="#modalShowData"
-                                            wire:click="getOneData('{{ $item->id }}')">View</button>
+                                            data-bs-target="#modalShowData-{{ $item->id }}">
+                                            View
+                                        </button>
 
                                         @if (Auth::user()->hasRole('director') && count($reimbursementLogs) == 1)
                                             <button wire:confirm="Anda yakin ingin menyetujui proposal ini?"
@@ -89,7 +90,7 @@
                                         @if (Auth::user()->hasRole('staff') && count($reimbursementLogs) == 1)
                                             <button class="btn btn-sm text-white border-0 bg-primary"
                                                 style="width: 5vw;" data-bs-toggle="modal"
-                                                data-bs-target="#modalEditUser{{ $item->id }}">Edit</button>
+                                                data-bs-target="#modalEditReimburs-{{ $item->id }}">Edit</button>
                                             <button wire:confirm="Anda yakin ingin menghapus proposal ini?"
                                                 class="btn btn-sm text-white border-0 bg-danger"
                                                 wire:click="deleteData('{{ $item->id }}')"

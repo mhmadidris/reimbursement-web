@@ -23,7 +23,7 @@ class Reimbursement extends Component
     public $reimbursement_logs;
     public $dateReimburs, $nameReimburs, $descReimburs, $mediaReimburs;
 
-    public $getReimburs;
+    public $getDetailReimburs;
 
     #[On('updateData')]
     private function getData()
@@ -38,11 +38,6 @@ class Reimbursement extends Component
         }
 
         return $reimbursements;
-    }
-
-    public function getOneData($id)
-    {
-        $this->getReimburs = ModelsReimbursement::findOrFail($id)->first();
     }
 
     public function inserData()
